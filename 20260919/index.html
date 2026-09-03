@@ -33,7 +33,7 @@ body {
 
 /* ── HERO ── */
 .hero {
-  background: #0F3348;
+  background: linear-gradient(135deg, #C85A2A 0%, #E8824A 40%, #F2A86F 70%, #E07A3A 100%);
   color: white;
   padding: 60px 32px 56px;
   position: relative;
@@ -42,14 +42,14 @@ body {
 .hero-bg {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 70% 80% at 90% 110%, rgba(74,127,165,0.45) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 60% at -10% -10%, rgba(28,79,110,0.6) 0%, transparent 50%);
+    radial-gradient(ellipse 60% 70% at 95% 105%, rgba(255,200,120,0.4) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 60% at -5% -5%, rgba(180,60,20,0.35) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 50% 110%, rgba(120,30,10,0.2) 0%, transparent 55%);
 }
 .hero-wave {
-  position: absolute; bottom: -1px; left: 0; right: 0;
-  height: 40px;
-  background: var(--foam);
-  clip-path: ellipse(52% 100% at 50% 100%);
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.15);
 }
 .hero-inner {
   max-width: 760px; margin: 0 auto; position: relative; z-index: 1;
@@ -64,11 +64,11 @@ body {
   font-weight: 400; line-height: 1.0;
   letter-spacing: -0.02em; margin-bottom: 0;
 }
-.hero-divider { width: 36px; height: 1.5px; background: rgba(255,255,255,0.2); margin: 26px 0; }
+.hero-divider { width: 36px; height: 1.5px; background: rgba(255,255,255,0.35); margin: 26px 0; }
 .hero-meta { display: flex; gap: 0; flex-wrap: wrap; }
 .hero-meta-item {
   padding-right: 20px; margin-right: 20px;
-  border-right: 1px solid rgba(255,255,255,0.12);
+  border-right: 1px solid rgba(255,255,255,0.25);
 }
 .hero-meta-item:last-child { border-right: none; }
 .hero-meta-label { font-size: 10px; opacity: 0.4; letter-spacing: 0.08em; margin-bottom: 3px; font-weight: 300; }
@@ -326,6 +326,65 @@ main { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
 .progress-fill { height: 100%; background: var(--leaf); border-radius: 3px; transition: width 0.3s; }
 .progress-count { font-size: 11px; color: var(--mist); margin-top: 5px; text-align: right; }
 
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.hero-eyebrow { animation: fadeIn 0.6s ease both; }
+.hero h1      { animation: fadeUp 0.7s ease 0.1s both; }
+.hero-divider { animation: fadeIn 0.5s ease 0.35s both; }
+.hero-meta    { animation: fadeUp 0.6s ease 0.45s both; }
+
+.info-card:first-child { animation: slideLeft 0.6s ease 0.5s both; }
+.info-card:last-child  { animation: slideRight 0.6s ease 0.55s both; }
+
+.flight-card:first-child { animation: slideLeft 0.6s ease 0.6s both; }
+.flight-card.return      { animation: slideRight 0.6s ease 0.65s both; }
+
+.dday-number { animation: countUp 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.8s both; }
+
+/* 스크롤 감지 대상 */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 탭 패널 전환 */
+.tab-panel {
+  animation: fadeUp 0.3s ease both;
+}
+
+/* 체크 아이템 체크 시 */
+.check-item {
+  transition: all 0.2s ease;
+}
+.check-item.checked {
+  transform: scale(0.98);
+}
+
 /* ── FOOTER ── */
 footer {
   text-align: center; padding: 28px 24px;
@@ -404,8 +463,7 @@ footer {
         10:20 <span class="flight-times-sep">→</span> 11:35
       </div>
       <div class="flight-meta">
-        <span>티웨이항공 TW709</span>
-        <span>BNBQ6X</span><br>
+        <span>티웨이항공 TW709</span><br>
         9월 19일 토요일
       </div>
     </div>
@@ -420,8 +478,7 @@ footer {
         13:45 <span class="flight-times-sep">→</span> 15:00
       </div>
       <div class="flight-meta">
-        <span>제주항공 7C122</span>
-        <span>PH2IXN</span><br>
+        <span>제주항공 7C122</span><br>
         9월 21일 월요일
       </div>
     </div>
@@ -446,6 +503,14 @@ footer {
       <span class="day-label">Day 1</span>
       <span class="day-date">9월 19일 토요일</span>
     </div>
+
+    <div class="links-box">
+      <div class="links-box-title">사전 준비</div>
+      <ul class="links-list">
+        <li><a href="https://app.catchtable.co.kr/ct/shop/reverbjeju" target="_blank">📋 리버브제주 웨이팅 — 점심 전후부터 계속 확인</a></li>
+      </ul>
+    </div>
+
     <div class="timeline">
 
       <div class="event transport">
@@ -459,15 +524,14 @@ footer {
         <div class="event-card">
           <div class="event-time">10:20 → 11:35</div>
           <div class="event-title">김포 → 제주 · 티웨이항공 TW709</div>
-          <div class="event-note">예약번호 BNBQ6X</div>
         </div>
       </div>
 
       <div class="event transport">
         <div class="event-card">
           <div class="event-time">12:00</div>
-          <div class="event-title">렌터카 픽업</div>
-          <div class="event-note"><a href="https://map.naver.com/v5/search/제주공항+렌터카" target="_blank">📍 제주공항 렌터카 구역</a></div>
+          <div class="event-title">렌터카 픽업 · <a href="https://map.naver.com/v5/search/제주공항렌트카" target="_blank">제주공항렌트카</a></div>
+          <div class="event-note">2025 더뉴캐스퍼 터보 · 반납 9/21 12:30</div>
         </div>
       </div>
 
@@ -481,6 +545,14 @@ footer {
             <a href="https://map.naver.com/v5/search/비타민국수+외도점" target="_blank">비타민국수 외도점</a>
           </div>
           <div class="event-note">둘 중 선택</div>
+        </div>
+      </div>
+
+      <div class="event transport">
+        <div class="event-card">
+          <div class="event-time">13:00</div>
+          <div class="event-title">주유 · <a href="https://map.naver.com/v5/search/SK엔크린+삼성주유소+제주" target="_blank">SK엔크린 삼성주유소</a></div>
+          <div class="event-note">3만원</div>
         </div>
       </div>
 
@@ -569,12 +641,19 @@ footer {
     <div class="links-box">
       <div class="links-box-title">사전 준비</div>
       <ul class="links-list">
-        <li><a href="https://www.tourpassmall.com/product/100191" target="_blank">🎫 제주투어패스 24시간권</a></li>
-        <li><a href="https://naver.me/Fafzwdc8" target="_blank">🗺 맛집 지도 모음</a></li>
-        <li><a href="https://map.naver.com/v5/search/제주소랑ATV" target="_blank">📍 제주소랑ATV</a></li>
+        <li><a href="https://www.tourpassmall.com/product/100191" target="_blank">🎫 제주투어패스 24시간권 구매</a></li>
+      </ul>
+      <div style="margin-top:12px; font-size:11px; font-weight:600; color:var(--mist); letter-spacing:0.06em; margin-bottom:8px;">PASS 포함 항목</div>
+      <ul class="links-list">
+        <li><a href="https://map.naver.com/v5/search/제주소랑ATV" target="_blank">📍 제주소랑ATV <span style="color:var(--mist);">바코드예약</span></a></li>
+        <li><a href="https://map.naver.com/v5/search/나우카페+제주" target="_blank">📍 나우카페</a></li>
+        <li><a href="https://map.naver.com/v5/search/오알카페+제주" target="_blank">📍 오알카페</a></li>
+        <li><a href="https://map.naver.com/v5/search/드르쿰다카페+제주+상효" target="_blank">📍 드르쿰다카페</a></li>
+        <li><a href="https://map.naver.com/v5/search/엑트몬+제주" target="_blank">📍 엑트몬</a></li>
         <li><a href="https://map.naver.com/v5/search/편백포레스트ATV+제주" target="_blank">📍 편백포레스트ATV</a></li>
-        <li><a href="https://map.naver.com/v5/search/서귀포유람선" target="_blank">📍 서귀포유람선 (유선예약)</a></li>
-        <li><a href="https://map.naver.com/v5/search/제주제트" target="_blank">📍 제주제트 (유선예약)</a></li>
+        <li><a href="https://map.naver.com/v5/search/서귀포유람선" target="_blank">📍 서귀포유람선 <span style="color:var(--mist);">유선예약</span></a></li>
+        <li><a href="https://map.naver.com/v5/search/제주제트" target="_blank">📍 제주제트 <span style="color:var(--mist);">유선예약</span></a></li>
+        <li><a href="https://map.naver.com/v5/search/쇠소깍산물관광농원" target="_blank">📍 쇠소깍산물관광농원</a></li>
       </ul>
     </div>
 
@@ -582,7 +661,7 @@ footer {
       <div class="event-card" style="border-left-color:var(--leaf);">
         <div class="event-time">08:00 – 10:00</div>
         <div class="event-title">기상 / 준비</div>
-        <div class="event-note"><a href="https://map.naver.com/v5/search/연돈+제주" target="_blank">연돈</a> 웨이팅 확인 — 너무 많으면 패스</div>
+        <div class="event-note"><a href="https://app.catchtable.co.kr/ct/shop/yeondon_" target="_blank">📋 연돈 웨이팅 확인</a> — 너무 많으면 패스</div>
       </div>
     </div>
 
@@ -714,14 +793,13 @@ footer {
 
       <div class="event transport"><div class="event-card">
         <div class="event-time">12:30</div>
-        <div class="event-title">렌터카 반납</div>
-        <div class="event-note"><a href="https://map.naver.com/v5/search/제주공항+렌터카" target="_blank">📍 제주공항 렌터카</a></div>
+        <div class="event-title">렌터카 반납 · <a href="https://map.naver.com/v5/search/제주공항렌트카" target="_blank">제주공항렌트카</a></div>
+        <div class="event-note">2025 더뉴캐스퍼 터보 · 9/19 12:00 ~ 9/21 12:30</div>
       </div></div>
 
       <div class="event transport"><div class="event-card">
         <div class="event-time">13:45 → 15:00</div>
         <div class="event-title">제주 → 김포 · 제주항공 7C122</div>
-        <div class="event-note">예약번호 PH2IXN</div>
       </div></div>
 
     </div>
@@ -749,9 +827,13 @@ footer {
             <div class="check-box"><span class="check-tick">✓</span></div>
             <span class="check-label">항공권 예약번호 확인<br><small style="color:var(--mist);">BNBQ6X / PH2IXN</small></span>
           </div>
-          <div class="check-item" onclick="toggleCheck(this)" data-id="c3">
+          <div class="check-item checked" onclick="toggleCheck(this)" data-id="c3">
             <div class="check-box"><span class="check-tick">✓</span></div>
-            <span class="check-label">렌터카 예약 확인</span>
+            <span class="check-label">렌터카 예약 확인<br><small style="color:var(--mist);">더뉴캐스퍼 터보 · 제주공항렌트카</small></span>
+          </div>
+          <div class="check-item checked" onclick="toggleCheck(this)" data-id="c3b">
+            <div class="check-box"><span class="check-tick">✓</span></div>
+            <span class="check-label">운전자 등록 완료</span>
           </div>
           <div class="check-item" onclick="toggleCheck(this)" data-id="c4">
             <div class="check-box"><span class="check-tick">✓</span></div>
@@ -801,7 +883,7 @@ footer {
           </div>
           <div class="check-item" onclick="toggleCheck(this)" data-id="c14">
             <div class="check-box"><span class="check-tick">✓</span></div>
-            <span class="check-label">운동화 (ATV용)</span>
+            <span class="check-label">운동화</span>
           </div>
         </div>
       </div>
@@ -828,10 +910,6 @@ footer {
           <div class="check-item" onclick="toggleCheck(this)" data-id="c19">
             <div class="check-box"><span class="check-tick">✓</span></div>
             <span class="check-label">비상약 (소화제, 두통약)</span>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)" data-id="c20">
-            <div class="check-box"><span class="check-tick">✓</span></div>
-            <span class="check-label">멀미약 (배 타는 경우)</span>
           </div>
         </div>
       </div>
@@ -861,10 +939,6 @@ footer {
       <div class="checklist-group">
         <div class="checklist-group-label">🎒 기타</div>
         <div class="checklist-grid">
-          <div class="check-item" onclick="toggleCheck(this)" data-id="c25">
-            <div class="check-box"><span class="check-tick">✓</span></div>
-            <span class="check-label">현금 (시장 대비)</span>
-          </div>
           <div class="check-item" onclick="toggleCheck(this)" data-id="c26">
             <div class="check-box"><span class="check-tick">✓</span></div>
             <span class="check-label">에코백 / 보조 가방</span>
@@ -897,6 +971,24 @@ footer {
 </footer>
 
 <script>
+// ── 스크롤 reveal
+(function() {
+  // 타임라인 이벤트 카드, 조건블록, 링크박스에 reveal 적용
+  document.querySelectorAll('.event-card, .condition-block, .links-box, .flight-section-title, .legend').forEach((el, i) => {
+    el.classList.add('reveal');
+    el.style.transitionDelay = (i % 6) * 0.05 + 's';
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+
 // ── 탭 전환
 function switchTab(id) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -959,7 +1051,7 @@ function switchTab(id) {
       `).join('');
     })
     .catch(() => {
-      document.getElementById('weather-content').textContent = '날씨 정보를 불러올 수 없어요';
+      document.getElementById('weather-content').innerHTML = '<span style="font-size:13px;color:var(--basalt);font-weight:500;">곧 업데이트 예정</span><br><span style="font-size:11px;color:var(--mist);line-height:1.8;">출발 1–2주 전부터 예보가 자동으로 표시돼요 ☀️</span>';
     });
 })();
 
