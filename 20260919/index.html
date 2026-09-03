@@ -6,6 +6,19 @@
 <title>제주도 여행 · 2026년 9월 19–21일</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  var panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
+  var idx = ['day1','day2','day3','checklist'].indexOf(id);
+  var btns = document.querySelectorAll('.tab-btn');
+  if (btns[idx]) btns[idx].classList.add('active');
+  if (window.applyReveal) window.applyReveal(id);
+}
+window.switchTab = switchTab;
+</script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1023,40 +1036,23 @@ footer {
 })();
 
 // ── 스크롤 reveal
-function applyReveal(panelId) {
-  const panel = document.getElementById('tab-' + panelId);
+window.applyReveal = function(panelId) {
+  var panel = document.getElementById('tab-' + panelId);
   if (!panel) return;
-  panel.querySelectorAll('.event-card, .condition-block, .links-box, .legend').forEach((el, i) => {
+  panel.querySelectorAll('.event-card, .condition-block, .links-box, .legend').forEach(function(el, i) {
     if (!el.classList.contains('reveal')) {
       el.classList.add('reveal');
       el.style.transitionDelay = (i % 6) * 0.05 + 's';
     }
   });
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
-      }
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
     });
   }, { threshold: 0.1 });
-  panel.querySelectorAll('.reveal').forEach(el => io.observe(el));
-}
-applyReveal('day1');
-
-// ── 탭 전환
-function switchTab(id) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  const idx = ['day1','day2','day3','checklist'].indexOf(id);
-  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
-  applyReveal(id);
-}
-window.switchTab = switchTab;
-window.toggleCheck = toggleCheck;
-window.resetChecklist = resetChecklist;
-window.filterDay = function(day) {};  // 지도 없으므로 빈 함수
+  panel.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+};
+window.applyReveal('day1');
 
 // ── 날씨 (Open-Meteo 무료 API)
 (function() {
@@ -1219,5 +1215,6 @@ loadChecks();
   setInterval(highlight, 60 * 1000); // 1분마다 갱신
 })();
 
+</script>
 </body>
 </html>
