@@ -491,6 +491,7 @@ footer {
     <button class="tab-btn active" onclick="switchTab('day1')">Day 1<br><small style="font-weight:300;font-size:10px;">9/19 토</small></button>
     <button class="tab-btn" onclick="switchTab('day2')">Day 2<br><small style="font-weight:300;font-size:10px;">9/20 일</small></button>
     <button class="tab-btn" onclick="switchTab('day3')">Day 3<br><small style="font-weight:300;font-size:10px;">9/21 월</small></button>
+    <button class="tab-btn" onclick="switchTab('map')">지도<br><small style="font-weight:300;font-size:10px;">전체 일정</small></button>
     <button class="tab-btn" onclick="switchTab('checklist')">체크리스트<br><small style="font-weight:300;font-size:10px;">짐 · 예약</small></button>
   </div>
 </div>
@@ -561,7 +562,7 @@ footer {
           <div class="event-time">13:30 – 15:00</div>
           <div class="event-title">
             <a href="https://map.naver.com/v5/search/리버브제주" target="_blank">리버브제주</a>
-            <span class="tag tag-reserve">캐치테이블 예약</span>
+            <span class="tag tag-reserve">캐치테이블 웨이팅</span>
           </div>
           <div class="event-note">LP 카페 · 제주시</div>
         </div>
@@ -805,6 +806,20 @@ footer {
     </div>
   </div>
 
+  <!-- ── MAP ── -->
+  <div id="tab-map" class="tab-panel">
+    <div style="margin-bottom:16px;">
+      <div id="map-filters" style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+        <button class="map-btn active" data-day="all" onclick="filterDay('all')">전체</button>
+        <button class="map-btn" data-day="1" onclick="filterDay('1')">Day 1</button>
+        <button class="map-btn" data-day="2" onclick="filterDay('2')">Day 2</button>
+        <button class="map-btn" data-day="3" onclick="filterDay('3')">Day 3</button>
+      </div>
+      <div id="map-status" style="font-size:12px; color:var(--mist); margin-bottom:10px;">장소 좌표 불러오는 중…</div>
+    </div>
+    <div id="map" style="width:100%; height:500px; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1);"></div>
+  </div>
+
   <!-- ── CHECKLIST ── -->
   <div id="tab-checklist" class="tab-panel">
     <div class="checklist-section">
@@ -825,7 +840,7 @@ footer {
           </div>
           <div class="check-item" onclick="toggleCheck(this)" data-id="c2">
             <div class="check-box"><span class="check-tick">✓</span></div>
-            <span class="check-label">항공권 예약번호 확인<br><small style="color:var(--mist);">BNBQ6X / PH2IXN</small></span>
+            <span class="check-label">항공권 확인<br><small style="color:var(--mist);">티웨이 TW709 · 제주항공 7C122</small></span>
           </div>
           <div class="check-item checked" onclick="toggleCheck(this)" data-id="c3">
             <div class="check-box"><span class="check-tick">✓</span></div>
@@ -838,10 +853,6 @@ footer {
           <div class="check-item" onclick="toggleCheck(this)" data-id="c4">
             <div class="check-box"><span class="check-tick">✓</span></div>
             <span class="check-label">벨룸리조트 예약 확인</span>
-          </div>
-          <div class="check-item" onclick="toggleCheck(this)" data-id="c5">
-            <div class="check-box"><span class="check-tick">✓</span></div>
-            <span class="check-label">캐치테이블 예약 확인<br><small style="color:var(--mist);">리버브제주</small></span>
           </div>
           <div class="check-item" onclick="toggleCheck(this)" data-id="c6">
             <div class="check-box"><span class="check-tick">✓</span></div>
@@ -994,8 +1005,9 @@ function switchTab(id) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  const idx = ['day1','day2','day3','checklist'].indexOf(id);
+  const idx = ['day1','day2','day3','map','checklist'].indexOf(id);
   document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  if (id === 'map' && !window._mapInited) initMap();
 }
 
 // ── D-Day
@@ -1083,6 +1095,106 @@ function resetChecklist() {
   updateProgress();
 }
 loadChecks();
+
+// ── 지도
 </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+.map-btn { padding:6px 14px; border-radius:20px; border:1.5px solid #4A7FA5; background:white; color:#4A7FA5; font-size:12px; font-family:'Noto Sans KR',sans-serif; font-weight:500; cursor:pointer; transition:all 0.15s; }
+.map-btn.active, .map-btn:hover { background:#1C4F6E; border-color:#1C4F6E; color:white; }
+.leaflet-popup-content-wrapper { border-radius:10px !important; box-shadow:0 4px 16px rgba(0,0,0,0.12) !important; padding:0 !important; }
+.leaflet-popup-content { margin:0 !important; }
+.map-popup { padding:12px 16px; min-width:160px; }
+.map-popup-day  { font-size:10px; color:#8B9EB7; letter-spacing:.06em; margin-bottom:2px; }
+.map-popup-time { font-size:11px; color:#8B9EB7; margin-bottom:3px; }
+.map-popup-name { font-size:13px; font-weight:600; color:#2B2B2B; margin-bottom:5px; line-height:1.4; }
+.map-popup-type { font-size:10px; padding:2px 8px; border-radius:8px; display:inline-block; }
+</style>
+<script>
+const colors = { food:'#E8824A', cafe:'#C9973A', activity:'#4A7C59', accommodation:'#7B6FA8', transport:'#8B9EB7', night:'#1C4F6E' };
+const typeLabel = { food:'식사', cafe:'카페', activity:'액티비티', accommodation:'숙소', transport:'이동', night:'야간' };
+
+const places = [
+  { day:'1', type:'food',          q:'임순이네밥집 제주',          name:'임순이네밥집',          time:'12:00–13:00' },
+  { day:'1', type:'transport',     q:'SK엔크린 삼성주유소 제주시', name:'SK엔크린 삼성주유소',   time:'13:00' },
+  { day:'1', type:'cafe',          q:'리버브 카페 제주',           name:'리버브제주',            time:'13:30–15:00' },
+  { day:'1', type:'activity',      q:'보롬사진관 귀덕 제주',       name:'보롬사진관 귀덕점',     time:'15:00–15:30' },
+  { day:'1', type:'accommodation', q:'벨룸리조트 서귀포',          name:'벨룸리조트',            time:'체크인 15:30' },
+  { day:'1', type:'food',          q:'고기강요 서귀포',            name:'흑돼지 (고기강요 외)',  time:'19:00–20:00' },
+  { day:'1', type:'night',         q:'마루아라 서귀포',            name:'마루아라',              time:'20:00–22:00' },
+
+  { day:'2', type:'cafe',          q:'오알카페 서귀포',            name:'오알카페',              time:'09:30–11:00' },
+  { day:'2', type:'food',          q:'서광보말칼국수 제주',        name:'서광보말칼국수',        time:'10:30–11:00' },
+  { day:'2', type:'activity',      q:'서귀포 유람선 서귀포',       name:'서귀포 유람선',         time:'11:20–12:20' },
+  { day:'2', type:'cafe',          q:'나우카페 서귀포',            name:'나우카페',              time:'11:30–12:30' },
+  { day:'2', type:'food',          q:'연돈 제주',                  name:'연돈',                  time:'13:30–14:30' },
+  { day:'2', type:'cafe',          q:'드르쿰다카페 서귀포 상효',   name:'드르쿰다카페 상효점',   time:'14:00–15:00' },
+  { day:'2', type:'activity',      q:'편백포레스트 제주',          name:'편백포레스트ATV',       time:'15:00–16:30' },
+  { day:'2', type:'activity',      q:'쇠소깍 서귀포',              name:'쇠소깍',                time:'15:00–16:30' },
+  { day:'2', type:'night',         q:'서귀포 매일올레시장',        name:'올레시장',              time:'20:30' },
+
+  { day:'3', type:'accommodation', q:'벨룸리조트 서귀포',          name:'벨룸리조트 체크아웃',   time:'10:00–10:30' },
+  { day:'3', type:'food',          q:'뽕이네각재기국 제주 아라',   name:'뽕이네각재기 3호점',    time:'10:30–12:00' },
+];
+
+let leafletMap, allMarkers = [];
+
+async function geocode(q) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=kr&accept-language=ko`;
+  const r = await fetch(url, { headers:{'User-Agent':'jeju-travel-2026'} });
+  const d = await r.json();
+  return d.length ? { lat:parseFloat(d[0].lat), lng:parseFloat(d[0].lon) } : null;
+}
+
+function makeIcon(color) {
+  return L.divIcon({
+    className:'',
+    html:`<div style="width:13px;height:13px;background:${color};border:2.5px solid white;border-radius:50%;box-shadow:0 1px 6px rgba(0,0,0,0.35);"></div>`,
+    iconSize:[13,13], iconAnchor:[6,6], popupAnchor:[0,-12]
+  });
+}
+
+async function initMap() {
+  window._mapInited = true;
+  leafletMap = L.map('map').setView([33.36, 126.54], 10);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution:'© OpenStreetMap © CARTO', maxZoom:18
+  }).addTo(leafletMap);
+
+  const status = document.getElementById('map-status');
+  let done = 0;
+
+  for (const p of places) {
+    status.textContent = `장소 찾는 중… (${++done}/${places.length}) ${p.name}`;
+    const coord = await geocode(p.q);
+    await new Promise(res => setTimeout(res, 350));
+    if (!coord) continue;
+    const color = colors[p.type];
+    const m = L.marker([coord.lat, coord.lng], { icon:makeIcon(color) })
+      .bindPopup(`<div class="map-popup">
+        <div class="map-popup-day">DAY ${p.day}</div>
+        <div class="map-popup-time">${p.time}</div>
+        <div class="map-popup-name">${p.name}</div>
+        <span class="map-popup-type" style="background:${color}22;color:${color};">${typeLabel[p.type]}</span>
+      </div>`, { closeButton:false, maxWidth:220 });
+    m.on('mouseover', function(){ this.openPopup(); });
+    m.on('mouseout',  function(){ this.closePopup(); });
+    m._dayTag = p.day;
+    m.addTo(leafletMap);
+    allMarkers.push(m);
+  }
+  status.textContent = `✓ ${allMarkers.length}개 장소 표시 완료`;
+}
+
+function filterDay(day) {
+  document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-day="${day}"]`).classList.add('active');
+  allMarkers.forEach(m => {
+    if (day === 'all' || m._dayTag === day) { if (!leafletMap.hasLayer(m)) leafletMap.addLayer(m); }
+    else { if (leafletMap.hasLayer(m)) leafletMap.removeLayer(m); }
+  });
+}
 </body>
 </html>
