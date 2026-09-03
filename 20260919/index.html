@@ -1002,40 +1002,14 @@ footer {
 </footer>
 
 <script>
-// ── 스크롤 reveal
-(function() {
-  // 타임라인 이벤트 카드, 조건블록, 링크박스에 reveal 적용
-  document.querySelectorAll('.event-card, .condition-block, .links-box, .flight-section-title, .legend').forEach((el, i) => {
-    el.classList.add('reveal');
-    el.style.transitionDelay = (i % 6) * 0.05 + 's';
-  });
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-})();
-
-// ── 탭 전환
-function switchTab(id) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  const idx = ['day1','day2','day3','checklist'].indexOf(id);
-  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
-}
-
-// ── D-Day
+// ── D-Day (맨 먼저 실행)
 (function() {
   const target = new Date('2026-09-19T10:20:00+09:00');
   const now = new Date();
   const diff = target - now;
   const el = document.getElementById('dday');
   const sub = document.getElementById('dday-sub');
+  if (!el) return;
   if (diff <= 0) {
     el.textContent = '🎉 여행 중!';
     el.classList.add('arrived');
@@ -1047,6 +1021,42 @@ function switchTab(id) {
     sub.textContent = days + '일 ' + hours + '시간 남았어요';
   }
 })();
+
+// ── 스크롤 reveal
+function applyReveal(panelId) {
+  const panel = document.getElementById('tab-' + panelId);
+  if (!panel) return;
+  panel.querySelectorAll('.event-card, .condition-block, .links-box, .legend').forEach((el, i) => {
+    if (!el.classList.contains('reveal')) {
+      el.classList.add('reveal');
+      el.style.transitionDelay = (i % 6) * 0.05 + 's';
+    }
+  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  panel.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+applyReveal('day1');
+
+// ── 탭 전환
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const idx = ['day1','day2','day3','checklist'].indexOf(id);
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  applyReveal(id);
+}
+window.switchTab = switchTab;
+window.toggleCheck = toggleCheck;
+window.resetChecklist = resetChecklist;
+window.filterDay = function(day) {};  // 지도 없으므로 빈 함수
 
 // ── 날씨 (Open-Meteo 무료 API)
 (function() {
