@@ -1007,7 +1007,7 @@ function switchTab(id) {
   document.getElementById('tab-' + id).classList.add('active');
   const idx = ['day1','day2','day3','map','checklist'].indexOf(id);
   document.querySelectorAll('.tab-btn')[idx].classList.add('active');
-  if (id === 'map' && !window._mapInited) initMap();
+  if (id === 'map' && !window._mapInited && typeof window.initMap === 'function') window.initMap();
 }
 
 // ── D-Day
@@ -1196,5 +1196,8 @@ function filterDay(day) {
     else { if (leafletMap.hasLayer(m)) leafletMap.removeLayer(m); }
   });
 }
+
+window.initMap = initMap;
+window.filterDay = filterDay;
 </body>
 </html>
