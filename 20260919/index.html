@@ -400,40 +400,6 @@ main { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
   transform: scale(0.98);
 }
 
-/* ── 현재 일정 하이라이트 */
-.event-card.now-active {
-  border-left-color: #E8824A !important;
-  background: linear-gradient(135deg, #FFF8F4 0%, white 60%);
-  box-shadow: 0 4px 16px rgba(232,130,74,0.18) !important;
-}
-.event-card.now-active::after {
-  content: '📍 지금';
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 600;
-  color: #E8824A;
-  background: rgba(232,130,74,0.12);
-  padding: 2px 8px;
-  border-radius: 8px;
-  margin-left: 8px;
-  vertical-align: middle;
-  animation: pulse 1.8s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.event.now-active-dot::before {
-  background: #E8824A !important;
-  box-shadow: 0 0 0 3px rgba(232,130,74,0.25) !important;
-  animation: dotPulse 1.8s ease-in-out infinite;
-}
-@keyframes dotPulse {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(232,130,74,0.25); }
-  50% { box-shadow: 0 0 0 6px rgba(232,130,74,0.1); }
-}
-.event-card.past { opacity: 0.45; }
-
 /* ── FOOTER ── */
 footer {
   text-align: center; padding: 28px 24px;
@@ -493,6 +459,10 @@ footer {
   </div>
   <div class="info-card">
     <div class="info-card-label">🌤 제주 날씨 (9/19–21)</div>
+    <div id="weather-now" style="display:flex;align-items:center;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #F0F0F0;">
+      <span style="font-size:11px;color:var(--mist);margin-right:8px;">지금</span>
+      <span style="font-size:12px;color:var(--mist);">불러오는 중…</span>
+    </div>
     <div id="weather-content" class="weather-loading">불러오는 중…</div>
   </div>
 </div>
@@ -1052,8 +1022,7 @@ window.applyReveal('day1');
 
 // ── 날씨 (Open-Meteo 무료 API)
 (function() {
-  const lat = 33.4996; const lon = 126.5312;
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&start_date=2026-09-19&end_date=2026-09-21`;
+  const lat = 33.4996, lon = 126.5312;
 
   const wIcon = code => {
     if (code === 0) return '☀️';
@@ -1068,9 +1037,27 @@ window.applyReveal('day1');
     return '🌤️';
   };
 
-  fetch(url)
+  // 현재 날씨
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,relative_humidity_2m&timezone=Asia%2FSeoul`)
     .then(r => r.json())
     .then(d => {
+      const c = d.current;
+      document.getElementById('weather-now').innerHTML = `
+        <span style="font-size:11px;color:var(--mist);margin-right:8px;">지금</span>
+        <span style="font-size:22px;">${wIcon(c.weathercode)}</span>
+        <span style="font-size:18px;font-weight:600;color:var(--basalt);margin:0 6px;">${Math.round(c.temperature_2m)}°</span>
+        <span style="font-size:11px;color:var(--mist);">습도 ${c.relative_humidity_2m}%</span>
+      `;
+    })
+    .catch(() => {
+      document.getElementById('weather-now').innerHTML = '<span style="font-size:11px;color:var(--mist);">현재 날씨 불러오기 실패</span>';
+    });
+
+  // 여행 기간 예보
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&start_date=2026-09-19&end_date=2026-09-21`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.error) throw new Error();
       const days = ['19일(토)', '20일(일)', '21일(월)'];
       const el = document.getElementById('weather-content');
       el.className = 'weather-grid';
@@ -1116,100 +1103,6 @@ function resetChecklist() {
   updateProgress();
 }
 loadChecks();
-
-// ── 현재 일정 하이라이트
-(function() {
-  // 날짜별 탭 매핑
-  const dayMap = {
-    '2026-09-19': 'day1',
-    '2026-09-20': 'day2',
-    '2026-09-21': 'day3',
-  };
-
-  // 각 이벤트 카드에 시간 파싱
-  // data-time="HH:MM" or "HH:MM–HH:MM" 형식으로 event-card에 속성 추가
-  const schedule = {
-    day1: [
-      { start:'09:00', end:'10:20' },
-      { start:'10:20', end:'12:00' },
-      { start:'12:00', end:'13:00' },
-      { start:'13:00', end:'13:30' },
-      { start:'13:30', end:'15:00' },
-      { start:'15:00', end:'15:30' },
-      { start:'15:30', end:'16:30' },
-      { start:'16:30', end:'18:30' },
-      { start:'18:30', end:'19:00' },
-      { start:'19:00', end:'20:00' },
-      { start:'20:00', end:'22:00' },
-      { start:'22:00', end:'23:59' },
-    ],
-    day2: [
-      { start:'08:00', end:'10:00' },
-      { start:'10:00', end:'10:30' },
-      { start:'10:30', end:'11:00' },
-      { start:'11:30', end:'12:30' },
-      { start:'12:30', end:'13:30' },
-      { start:'13:30', end:'14:30' },
-      { start:'15:00', end:'16:30' },
-      { start:'16:30', end:'18:00' },
-      { start:'09:30', end:'11:00' },
-      { start:'11:20', end:'12:20' },
-      { start:'12:20', end:'14:00' },
-      { start:'14:00', end:'15:00' },
-      { start:'15:00', end:'16:30' },
-      { start:'16:00', end:'18:00' },
-      { start:'18:00', end:'20:00' },
-      { start:'20:30', end:'23:59' },
-    ],
-    day3: [
-      { start:'09:00', end:'10:00' },
-      { start:'10:00', end:'10:30' },
-      { start:'10:30', end:'12:00' },
-      { start:'12:30', end:'13:45' },
-      { start:'13:45', end:'15:00' },
-    ],
-  };
-
-  function toMin(hhmm) {
-    const [h, m] = hhmm.split(':').map(Number);
-    return h * 60 + m;
-  }
-
-  function highlight() {
-    const now = new Date();
-    const pad = n => String(n).padStart(2,'0');
-    const dateStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-    const tabId = dayMap[dateStr];
-    if (!tabId) return; // 여행 날짜 아니면 skip
-
-    const nowMin = now.getHours() * 60 + now.getMinutes();
-    const cards = document.querySelectorAll(`#tab-${tabId} .event-card`);
-    const events = schedule[tabId];
-
-    cards.forEach((card, i) => {
-      const ev = events[i];
-      if (!ev) return;
-      const s = toMin(ev.start);
-      const e = toMin(ev.end);
-      card.closest('.event')?.classList.remove('now-active-dot');
-      card.classList.remove('now-active', 'past');
-
-      if (nowMin >= s && nowMin < e) {
-        card.classList.add('now-active');
-        card.closest('.event')?.classList.add('now-active-dot');
-        // 해당 탭 자동 전환
-        switchTab(tabId);
-        // 카드로 스크롤
-        setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'center' }), 400);
-      } else if (nowMin >= e) {
-        card.classList.add('past');
-      }
-    });
-  }
-
-  highlight();
-  setInterval(highlight, 60 * 1000); // 1분마다 갱신
-})();
 
 </script>
 </body>
