@@ -288,10 +288,18 @@ main { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
 .legend {
   background: white; border-radius: 10px; padding: 14px 18px;
   box-shadow: 0 1px 6px rgba(0,0,0,0.05); margin-top: 24px;
-  display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+  display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center;
 }
 .legend-title { font-size: 11px; font-weight: 600; color: var(--sea); letter-spacing: 0.06em; text-transform: uppercase; width: 100%; margin-bottom: 4px; }
-.legend span { font-size: 12px; color: var(--mist); }
+.legend span {
+  font-size: 12px; color: var(--basalt);
+  display: flex; align-items: center; gap: 6px;
+}
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1.5px currentColor;
+}
 
 /* ── CHECKLIST ── */
 .checklist-section { margin-top: 28px; }
@@ -554,7 +562,6 @@ footer {
           <div class="event-title">
             점심 — <a href="https://map.naver.com/v5/search/%EC%9D%B4%EB%94%94%EA%B5%AD%EC%88%98+%EC%95%A0%EC%9B%94%EB%B3%B8%EC%A0%90" target="_blank">이디국수 애월본점</a>
           </div>
-
         </div>
       </div>
 
@@ -619,7 +626,7 @@ footer {
 
       <div class="event night">
         <div class="event-card">
-          <div class="event-time">19:30 – 22:00</div>
+          <div class="event-time">19:30 – 21:30</div>
           <div class="event-title">서귀포 야간 탐방</div>
           <div class="event-note">
             <a href="https://map.naver.com/v5/search/로즈마린+서귀포" target="_blank">로즈마린 야장</a> · 인형뽑기<br>
@@ -640,8 +647,12 @@ footer {
 
     <div class="legend">
       <div class="legend-title">범례</div>
-      <span>🔵 이동</span><span>🟠 식사</span><span>🟡 카페</span>
-      <span>🟢 액티비티</span><span>🟣 숙소</span><span>🔷 야간</span>
+      <span><span class="legend-dot" style="background:#8B9EB7;box-shadow:0 0 0 1.5px #8B9EB7;"></span>이동</span>
+      <span><span class="legend-dot" style="background:#E8824A;box-shadow:0 0 0 1.5px #E8824A;"></span>식사</span>
+      <span><span class="legend-dot" style="background:#C9973A;box-shadow:0 0 0 1.5px #C9973A;"></span>카페</span>
+      <span><span class="legend-dot" style="background:#4A7C59;box-shadow:0 0 0 1.5px #4A7C59;"></span>액티비티</span>
+      <span><span class="legend-dot" style="background:#7B6FA8;box-shadow:0 0 0 1.5px #7B6FA8;"></span>숙소</span>
+      <span><span class="legend-dot" style="background:#1C4F6E;box-shadow:0 0 0 1.5px #1C4F6E;"></span>야간</span>
     </div>
   </div>
 
@@ -652,22 +663,19 @@ footer {
       <span class="day-date">9월 20일 일요일</span>
     </div>
 
-    <div class="event activity" style="margin-bottom:16px; padding-left:0;">
-      <div class="event-card" style="border-left-color:var(--leaf);">
-        <div class="event-time">08:00 – 10:00</div>
-        <div class="event-title">기상 / 준비</div>
-        <div class="event-note"><a href="https://app.catchtable.co.kr/ct/shop/yeondon_" target="_blank">📋 연돈 웨이팅 확인</a> — 너무 많으면 패스</div>
-      </div>
-    </div>
-
     <div class="timeline">
+        <div class="event activity"><div class="event-card">
+          <div class="event-time">08:00 – 10:00</div>
+          <div class="event-title">기상 / 준비</div>
+          <div class="event-note"><a href="https://app.catchtable.co.kr/ct/shop/yeondon_" target="_blank">📋 연돈 웨이팅 확인</a> — 너무 많으면 패스</div>
+        </div></div>
         <div class="event food"><div class="event-card">
           <div class="event-time">09:30 – 10:00</div>
           <div class="event-title"><a href="https://app.catchtable.co.kr/ct/shop/yeondon_" target="_blank">연돈</a> 현장 웨이팅 등록</div>
         </div></div>
         <div class="event food"><div class="event-card">
           <div class="event-time">10:00 – 11:00</div>
-          <div class="event-title">아침 — <a href="https://map.naver.com/v5/search/중문수두리보말칼국수" target="_blank">중문수두리보말칼국수</a></div>
+          <div class="event-title">아침 — <a href="https://map.naver.com/v5/search/중문수두리보말칼국수" target="_blank">중문수두리보말칼국수</a> / <a href="https://map.naver.com/v5/search/대춘해장국+제주" target="_blank">대춘식당</a></div>
           <div class="event-note">
             <a href="https://www.tabling.co.kr/restaurant/5573" target="_blank">📋 테이블링 웨이팅 확인</a>
             <div style="margin-top:6px; padding:6px 10px; background:#F5F7FA; border-radius:7px; font-size:11px; color:var(--mist); display:inline-block;">
@@ -717,46 +725,48 @@ footer {
             <a href="https://map.naver.com/v5/search/큰엉해안경승지" target="_blank">큰엉해안경승지</a>
           </div>
         </div></div>
-        <div class="event food"><div class="event-card">
+        <div class="event transport"><div class="event-card">
           <div class="event-time">18:00 – 18:30</div>
           <div class="event-title"><a href="https://map.naver.com/v5/search/서귀포농협+하나로마트" target="_blank">서귀포농협 하나로마트</a> 장보기</div>
           <div class="event-note">장보고 숙소 복귀</div>
         </div></div>
-        <div class="event activity"><div class="event-card">
-          <div class="event-time">18:30 – 19:00</div>
-          <div class="event-title"><a href="https://map.naver.com/v5/search/새연교+서귀포" target="_blank">새연교</a> 노을감상</div>
-          <div class="event-note">숙소에서 이동</div>
+        <div class="event food"><div class="event-card">
+          <div class="event-time">19:00 – 20:30</div>
+          <div class="event-title">
+            저녁 —
+            <a href="https://map.naver.com/v5/search/탐라한상+제주" target="_blank">탐라한상</a>
+            <span style="color:var(--mist);font-size:12px;"> / </span>
+            <a href="https://map.naver.com/v5/search/자리돔횟집+제주" target="_blank">자리돔횟집</a>
+          </div>
+          <div class="event-note">둘 중 선택</div>
+        </div></div>
+        <div class="event night"><div class="event-card">
+          <div class="event-time">20:30</div>
+          <div class="event-title">시장 쇼핑 후 숙소 복귀</div>
+          <div class="event-note">
+            <a href="https://map.naver.com/v5/search/서귀포+올레시장" target="_blank">올레시장</a> — 회 포장 등
+          </div>
+          <div style="margin-top:8px; padding:8px 10px; background:#F5F7FA; border-radius:7px; font-size:11px; color:var(--mist);">
+            🅿 올레시장 주차 &nbsp;·&nbsp;
+            <a href="https://map.naver.com/v5/search/아랑조을거리공영주차빌딩" target="_blank" style="color:var(--sky);">아랑조을거리공영주차빌딩</a>
+            <span style="margin:0 4px;">or</span>
+            <a href="https://map.naver.com/v5/search/미성공사+서귀포" target="_blank" style="color:var(--sky);">미성공사 건너편</a>
+          </div>
+        </div></div>
+        <div class="event night"><div class="event-card">
+          <div class="event-time">20:30 ~</div>
+          <div class="event-title">숙소에서 마무리</div>
         </div></div>
     </div>
 
-    <div class="timeline" style="margin-top:4px;">
-      <div class="event food"><div class="event-card">
-        <div class="event-time">19:00 – 20:30</div>
-        <div class="event-title">
-          저녁 —
-          <a href="https://map.naver.com/v5/search/탐라한상+제주" target="_blank">탐라한상</a>
-          <span style="color:var(--mist);font-size:12px;"> / </span>
-          <a href="https://map.naver.com/v5/search/자리돔횟집+제주" target="_blank">자리돔횟집</a>
-        </div>
-        <div class="event-note">둘 중 선택</div>
-      </div></div>
-      <div class="event night"><div class="event-card">
-        <div class="event-time">20:30</div>
-        <div class="event-title">시장 쇼핑 후 숙소 복귀</div>
-        <div class="event-note">
-          <a href="https://map.naver.com/v5/search/서귀포+올레시장" target="_blank">올레시장</a> — 회 포장 등
-        </div>
-        <div style="margin-top:8px; padding:8px 10px; background:#F5F7FA; border-radius:7px; font-size:11px; color:var(--mist);">
-          🅿 올레시장 주차 &nbsp;·&nbsp;
-          <a href="https://map.naver.com/v5/search/아랑조을거리공영주차빌딩" target="_blank" style="color:var(--sky);">아랑조을거리공영주차빌딩</a>
-          <span style="margin:0 4px;">or</span>
-          <a href="https://map.naver.com/v5/search/미성공사+서귀포" target="_blank" style="color:var(--sky);">미성공사 건너편</a>
-        </div>
-      </div></div>
-      <div class="event night"><div class="event-card">
-        <div class="event-time">20:30 ~</div>
-        <div class="event-title">숙소에서 마무리</div>
-      </div></div>
+    <div class="legend">
+      <div class="legend-title">범례</div>
+      <span><span class="legend-dot" style="background:#8B9EB7;box-shadow:0 0 0 1.5px #8B9EB7;"></span>이동</span>
+      <span><span class="legend-dot" style="background:#E8824A;box-shadow:0 0 0 1.5px #E8824A;"></span>식사</span>
+      <span><span class="legend-dot" style="background:#C9973A;box-shadow:0 0 0 1.5px #C9973A;"></span>카페</span>
+      <span><span class="legend-dot" style="background:#4A7C59;box-shadow:0 0 0 1.5px #4A7C59;"></span>액티비티</span>
+      <span><span class="legend-dot" style="background:#7B6FA8;box-shadow:0 0 0 1.5px #7B6FA8;"></span>숙소</span>
+      <span><span class="legend-dot" style="background:#1C4F6E;box-shadow:0 0 0 1.5px #1C4F6E;"></span>야간</span>
     </div>
   </div>
 
@@ -794,6 +804,16 @@ footer {
         <div class="event-title">제주 → 김포 · 제주항공 7C122</div>
       </div></div>
 
+    </div>
+
+    <div class="legend">
+      <div class="legend-title">범례</div>
+      <span><span class="legend-dot" style="background:#8B9EB7;box-shadow:0 0 0 1.5px #8B9EB7;"></span>이동</span>
+      <span><span class="legend-dot" style="background:#E8824A;box-shadow:0 0 0 1.5px #E8824A;"></span>식사</span>
+      <span><span class="legend-dot" style="background:#C9973A;box-shadow:0 0 0 1.5px #C9973A;"></span>카페</span>
+      <span><span class="legend-dot" style="background:#4A7C59;box-shadow:0 0 0 1.5px #4A7C59;"></span>액티비티</span>
+      <span><span class="legend-dot" style="background:#7B6FA8;box-shadow:0 0 0 1.5px #7B6FA8;"></span>숙소</span>
+      <span><span class="legend-dot" style="background:#1C4F6E;box-shadow:0 0 0 1.5px #1C4F6E;"></span>야간</span>
     </div>
   </div>
 
