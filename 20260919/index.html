@@ -18,6 +18,16 @@ function switchTab(id) {
   if (window.applyReveal) window.applyReveal(id);
 }
 window.switchTab = switchTab;
+
+// ── 날짜 기준 자동 탭 포커싱
+(function() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const today = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  const tabMap = { '2026-09-19': 'day1', '2026-09-20': 'day2', '2026-09-21': 'day3' };
+  const target = tabMap[today] || 'day1';
+  if (target !== 'day1') switchTab(target);
+})();
 </script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
